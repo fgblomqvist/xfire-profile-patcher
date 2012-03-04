@@ -21,8 +21,8 @@ Public Class ImportDialog
                 GamesListBoxTable = Functions.ParseXML(xRead)
                 lboxGames.DataSource = GamesListBoxTable
 
-                lboxGames.DisplayMember = "Name"
-                lboxGames.ValueMember = "Data"
+                lboxGames.DisplayMember = "name"
+                lboxGames.ValueMember = "data"
 
             End If
 
@@ -50,7 +50,7 @@ Public Class ImportDialog
 
             For Each itm As DataRow In GamesListBoxTable.Rows
 
-                importList.Add(New String() {itm("Name").ToString(), itm("ID").ToString(), itm("Data").ToString()})
+                importList.Add(New String() {itm("name").ToString(), itm("id").ToString(), itm("data").ToString()})
 
             Next
 
@@ -72,18 +72,7 @@ Public Class ImportDialog
     Private Sub ImportButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnImport.Click
 
         If btnImport.Text = "Import" Then
-            Cursor = Cursors.WaitCursor
-
-            For Each itm As DataRow In GamesListBoxTable.Rows
-
-                ManageGames.AddGame(CStr(itm("Name")), CStr(itm("Data")), CStr(itm("ID")))
-
-            Next
-
-            Cursor = Cursors.Default
-
-            MsgBox("Done importing!")
-            Me.Close()
+            Me.DialogResult = Windows.Forms.DialogResult.OK
         Else
 
             Dim xRead As String = File.ReadAllText(txtImportDir.Text)
@@ -112,5 +101,8 @@ Public Class ImportDialog
 
     Private Sub RestoreUI()
         txtImportDir.Text = String.Empty
+        If GamesListBoxTable IsNot Nothing Then
+            GamesListBoxTable.Clear()
+        End If
     End Sub
 End Class
