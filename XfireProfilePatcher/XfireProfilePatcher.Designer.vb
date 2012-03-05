@@ -107,9 +107,9 @@ Partial Class XfireProfilePatcher
         'StatusLabel
         '
         Me.StatusLabel.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.StatusLabel.Location = New System.Drawing.Point(94, 146)
+        Me.StatusLabel.Location = New System.Drawing.Point(64, 145)
         Me.StatusLabel.Name = "StatusLabel"
-        Me.StatusLabel.Size = New System.Drawing.Size(109, 13)
+        Me.StatusLabel.Size = New System.Drawing.Size(139, 13)
         Me.StatusLabel.TabIndex = 6
         Me.StatusLabel.Text = "-"
         Me.StatusLabel.TextAlign = System.Drawing.ContentAlignment.BottomRight

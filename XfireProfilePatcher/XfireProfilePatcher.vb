@@ -289,7 +289,7 @@ Public Class XfireProfilePatcher
                     If Not String.IsNullOrEmpty(value) Then
                         patchCount += 1
                     Else
-                        If patchCount > 1 Then
+                        If patchCount >= 1 Then
                             'The file is partly patched
                             PatchLabelStatus = PatchStatus.PartlyPatched
                             'Enable the Restore button if there is an available backup

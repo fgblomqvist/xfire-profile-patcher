@@ -35,8 +35,9 @@ Partial Class ManageGames
         Me.RemoveButton = New System.Windows.Forms.Button()
         Me.OKButton = New System.Windows.Forms.Button()
         Me.Button4 = New System.Windows.Forms.Button()
-        Me.Button5 = New System.Windows.Forms.Button()
+        Me.btnAddManually = New System.Windows.Forms.Button()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.lblGameProfiles = New Global.XfireProfilePatcher.WinFormsControls.TransparentLabel()
         Me.lblCustomSettings = New System.Windows.Forms.LinkLabel()
         Me.HelpTip = New System.Windows.Forms.ToolTip(Me.components)
         Me.EditButton = New System.Windows.Forms.Button()
@@ -45,7 +46,6 @@ Partial Class ManageGames
         Me.bwCheckUpdates = New System.ComponentModel.BackgroundWorker()
         Me.btnContribute = New System.Windows.Forms.Button()
         Me.btnDIY = New System.Windows.Forms.Button()
-        Me.lblGameProfiles = New Global.XfireProfilePatcher.WinFormsControls.TransparentLabel()
         Me.menuGameUpdate.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.SuspendLayout()
@@ -134,15 +134,15 @@ Partial Class ManageGames
         Me.Button4.Text = "Cancel"
         Me.Button4.UseVisualStyleBackColor = True
         '
-        'Button5
+        'btnAddManually
         '
-        Me.Button5.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.Button5.Location = New System.Drawing.Point(12, 283)
-        Me.Button5.Name = "Button5"
-        Me.Button5.Size = New System.Drawing.Size(88, 23)
-        Me.Button5.TabIndex = 7
-        Me.Button5.Text = "Add Manually"
-        Me.Button5.UseVisualStyleBackColor = True
+        Me.btnAddManually.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.btnAddManually.Location = New System.Drawing.Point(12, 283)
+        Me.btnAddManually.Name = "btnAddManually"
+        Me.btnAddManually.Size = New System.Drawing.Size(88, 23)
+        Me.btnAddManually.TabIndex = 7
+        Me.btnAddManually.Text = "Add Manually"
+        Me.btnAddManually.UseVisualStyleBackColor = True
         '
         'GroupBox1
         '
@@ -158,6 +158,18 @@ Partial Class ManageGames
         Me.GroupBox1.TabIndex = 8
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Add Game"
+        '
+        'lblGameProfiles
+        '
+        Me.lblGameProfiles.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblGameProfiles.ForeColor = System.Drawing.SystemColors.ControlDarkDark
+        Me.lblGameProfiles.Location = New System.Drawing.Point(10, 32)
+        Me.lblGameProfiles.Name = "lblGameProfiles"
+        Me.lblGameProfiles.Size = New System.Drawing.Size(219, 13)
+        Me.lblGameProfiles.TabIndex = 11
+        Me.lblGameProfiles.TabStop = False
+        Me.lblGameProfiles.Text = "Searching for game profiles..."
+        Me.lblGameProfiles.TextAlign = System.Drawing.ContentAlignment.TopLeft
         '
         'lblCustomSettings
         '
@@ -234,18 +246,6 @@ Partial Class ManageGames
         Me.btnDIY.UseVisualStyleBackColor = True
         Me.btnDIY.Visible = False
         '
-        'lblGameProfiles
-        '
-        Me.lblGameProfiles.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblGameProfiles.ForeColor = System.Drawing.SystemColors.ControlDarkDark
-        Me.lblGameProfiles.Location = New System.Drawing.Point(10, 32)
-        Me.lblGameProfiles.Name = "lblGameProfiles"
-        Me.lblGameProfiles.Size = New System.Drawing.Size(219, 13)
-        Me.lblGameProfiles.TabIndex = 11
-        Me.lblGameProfiles.TabStop = False
-        Me.lblGameProfiles.Text = "Searching for game profiles..."
-        Me.lblGameProfiles.TextAlign = System.Drawing.ContentAlignment.TopLeft
-        '
         'ManageGames
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -257,7 +257,7 @@ Partial Class ManageGames
         Me.Controls.Add(Me.ImportButton)
         Me.Controls.Add(Me.EditButton)
         Me.Controls.Add(Me.GroupBox1)
-        Me.Controls.Add(Me.Button5)
+        Me.Controls.Add(Me.btnAddManually)
         Me.Controls.Add(Me.Button4)
         Me.Controls.Add(Me.OKButton)
         Me.Controls.Add(Me.RemoveButton)
@@ -283,7 +283,7 @@ Partial Class ManageGames
     Friend WithEvents RemoveButton As System.Windows.Forms.Button
     Friend WithEvents OKButton As System.Windows.Forms.Button
     Friend WithEvents Button4 As System.Windows.Forms.Button
-    Friend WithEvents Button5 As System.Windows.Forms.Button
+    Friend WithEvents btnAddManually As System.Windows.Forms.Button
     Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
     Friend WithEvents HelpTip As System.Windows.Forms.ToolTip
     Friend WithEvents EditButton As System.Windows.Forms.Button

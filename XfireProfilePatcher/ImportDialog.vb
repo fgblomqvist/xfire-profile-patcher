@@ -55,8 +55,6 @@ Public Class ImportDialog
             Next
 
             Cursor = Cursors.Default
-
-            MsgBox("Done importing!")
             Me.Close()
 
             Return importList

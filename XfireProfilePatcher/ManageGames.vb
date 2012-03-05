@@ -6,6 +6,7 @@ Imports System.Text.RegularExpressions
 Imports System.Net
 Imports System.Net.NetworkInformation
 Imports System.Threading
+Imports XfireProfilePatcher.Functions
 
 Public Class ManageGames
 
@@ -26,50 +27,18 @@ Public Class ManageGames
 
         Else
 
-            Dim exist As Boolean = False
+            Dim name As String = CStr(GameProfilesTable.Rows(cboxGameProfiles.SelectedIndex)("name"))
+            Dim data As String = CStr(GameProfilesTable.Rows(cboxGameProfiles.SelectedIndex)("data"))
+            Dim id As String = CStr(GameProfilesTable.Rows(cboxGameProfiles.SelectedIndex)("id"))
 
-            For Each row As DataRow In MyGamesTable.Rows
+            SafeAddGame(name, data, id, customData)
 
-                If row(0).ToString = CStr(GameProfilesTable.Rows(cboxGameProfiles.SelectedIndex)("Name")) Then
-
-                    exist = True
-
-                End If
-
-            Next
-
-            If exist = True Then
-
-                MsgBox("You have already added that game!", MsgBoxStyle.Critical)
-
-            Else
-
-                Dim name As String = CStr(GameProfilesTable.Rows(cboxGameProfiles.SelectedIndex)("name"))
-                Dim data As String = CStr(GameProfilesTable.Rows(cboxGameProfiles.SelectedIndex)("data"))
-                Dim ID As String = CStr(GameProfilesTable.Rows(cboxGameProfiles.SelectedIndex)("id"))
-
-                AddGame(name, data, ID, customData)
-
-                customData(0) = Nothing
-                customData(1) = Nothing
-
-            End If
+            customData(0) = Nothing
+            customData(1) = Nothing
 
         End If
 
         cboxGameProfiles.SelectedIndex = -1
-
-    End Sub
-
-    Public Sub AddGame(Name As String, Data As String)
-
-        AddGame(Name, Data, Nothing, Nothing)
-
-    End Sub
-
-    Public Sub Addgame(Name As String, Data As String, ID As String)
-
-        AddGame(Name, Data, ID, Nothing)
 
     End Sub
 
@@ -172,16 +141,20 @@ Public Class ManageGames
 
             If MyGamesTable.Columns.Count < 3 Then
                 'Wrong format, add a column
-                MyGamesTable.Columns.Add("ID")
+                MyGamesTable.Columns.Add("id")
             End If
+
+            MyGamesTable.PrimaryKey = New DataColumn() {MyGamesTable.Columns("id")}
 
         Else
 
             MyGamesTable = New DataTable
 
-            MyGamesTable.Columns.Add("Name")
-            MyGamesTable.Columns.Add("ID")
-            MyGamesTable.Columns.Add("Data")
+            MyGamesTable.Columns.Add("name")
+            MyGamesTable.Columns.Add("id")
+            MyGamesTable.Columns.Add("data")
+
+            MyGamesTable.PrimaryKey = New DataColumn() {MyGamesTable.Columns("id")}
 
         End If
 
@@ -222,13 +195,13 @@ Public Class ManageGames
 
     End Sub
 
-    Private Sub Button5_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button5.Click
+    Private Sub btnAddManually_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnAddManually.Click
 
         Dim results As String() = AddManually.Add()
 
         If (results IsNot Nothing) Then
 
-            AddGame(results(0), results(1))
+            SafeAddGame(results(0), results(1))
 
         End If
 
@@ -281,27 +254,25 @@ Public Class ManageGames
 
     Private Sub EditButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EditButton.Click
 
-        EditGame()
+        EditSelectedGame()
 
     End Sub
 
-    Private Sub EditGame()
+    Private Sub EditGame(name As String, id As String, data As String)
 
         Dim currentRow = DirectCast(MyGamesBinding.Current, DataRowView)
 
-        If currentRow Is Nothing Then
+        Dim result As String() = AddManually.Edit(name, id, data)
 
-            MsgBox("Please select a game first!", MsgBoxStyle.Critical)
+        If result IsNot Nothing Then
 
-        Else
+            If result(2) IsNot id Then
+                RemoveGame(id)
+            End If
 
-            Dim result As String() = AddManually.Edit(currentRow.Row("Name").ToString, currentRow.Row("Data").ToString)
-
-            If result IsNot Nothing Then
-
-                currentRow.Delete()
-                AddGame(result(0), result(1))
-
+            If SafeAddGame(result(0), result(1), result(2), Nothing, True) = False Then
+                'Send him back to editing
+                EditGame(result(0), result(2), result(1))
             End If
 
         End If
@@ -325,9 +296,11 @@ Public Class ManageGames
 
             For Each game As String() In results
 
-                AddGame(game(0), game(1))
+                SafeAddGame(game(0), game(2))
 
             Next
+
+            MsgBox("Done importing!")
 
         End If
 
@@ -338,14 +311,14 @@ Public Class ManageGames
         If e.KeyCode = Keys.Delete Then
             RemoveButton_Click(Nothing, Nothing)
         ElseIf e.KeyCode = Keys.Enter Then
-            EditGame()
+            EditSelectedGame()
         End If
 
     End Sub
 
     Private Sub MyGamesListBox_MouseDoubleClick(ByVal sender As Object, ByVal e As System.Windows.Forms.MouseEventArgs) Handles lboxAddedGames.MouseDoubleClick
 
-        EditGame()
+        EditSelectedGame()
 
     End Sub
 
@@ -494,26 +467,17 @@ Public Class ManageGames
 
     End Function
 
-    Private Function GetGameID(Data As String) As String
-
-        Dim regex As Regex = New Regex("(?<=\[)[\d_]{1,6}(?=\])")
-        Dim match As Match = regex.Match(Data)
-
-        Return match.Value
-
-    End Function
-
     Private Sub lblCustomSettings_LinkClicked(sender As System.Object, e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles lblCustomSettings.LinkClicked
 
         Dim values As String()
 
-            If customData(0) Is Nothing And customData(1) Is Nothing Then
-                values = ExtractCurrentValues(CStr(cboxGameProfiles.SelectedValue))
-                customData = Customizer.ShowDialog(values)
+        If customData(0) Is Nothing And customData(1) Is Nothing Then
+            values = ExtractCurrentValues(CStr(cboxGameProfiles.SelectedValue))
+            customData = Customizer.ShowDialog(values)
 
-            Else
-                customData = Customizer.ShowDialog(customData)
-            End If
+        Else
+            customData = Customizer.ShowDialog(customData)
+        End If
 
     End Sub
 
@@ -619,5 +583,66 @@ Public Class ManageGames
             SubmitGame()
         End If
 
+    End Sub
+
+    Private Function GameExists(id As String) As Boolean
+
+        Return MyGamesTable.Rows.Contains(id)
+
+    End Function
+
+    Private Sub RemoveGame(id As String)
+        MyGamesTable.Rows.Remove(MyGamesTable.Rows.Find(id))
+    End Sub
+
+    Private Function SafeAddGame(Name As String, Data As String) As Boolean
+        Return SafeAddGame(Name, Data, Nothing)
+    End Function
+
+    Private Function SafeAddGame(Name As String, Data As String, ID As String) As Boolean
+        Return SafeAddGame(Name, Data, ID, Nothing)
+    End Function
+
+    Private Function SafeAddGame(Name As String, Data As String, ID As String, customData As String()) As Boolean
+        Return SafeAddGame(Name, Data, ID, customData, False)
+    End Function
+
+    Private Function SafeAddGame(ByVal Name As String, ByVal Data As String, ByVal ID As String, ByVal customData As String(), ByVal forceReplace As Boolean) As Boolean
+
+        If ID = Nothing Or String.IsNullOrWhiteSpace(ID) Then
+            ID = GetGameID(Data)
+            'If ID still is nothing, then this is not a valid game profile
+            If ID = Nothing Or String.IsNullOrWhiteSpace(ID) Then
+                MessageBox.Show("Unable to add game, it's missing a valid ID!", "Invalid game profile", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return False
+            End If
+        End If
+
+        If GameExists(ID) = True Then
+            If Not forceReplace Then
+                If MessageBox.Show(String.Format("You already have a game ({0}){2}with the ID {1} in your list,{2} do you want to replace it?", Name, ID, Environment.NewLine), "Error",
+                                   MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2) = Windows.Forms.DialogResult.Yes Then
+                    'Remove the existing game
+                    RemoveGame(ID)
+                    AddGame(Name, Data, ID, customData)
+                End If
+            Else
+                RemoveGame(ID)
+                AddGame(Name, Data, ID, customData)
+            End If
+        Else
+            AddGame(Name, Data, ID, customData)
+        End If
+
+        Return True
+    End Function
+
+    Private Sub EditSelectedGame()
+        Dim currentRow = DirectCast(MyGamesBinding.Current, DataRowView)
+        If currentRow Is Nothing Then
+            MsgBox("Please select a game first!", MsgBoxStyle.Critical)
+        Else
+            EditGame(currentRow.Row("name").ToString, currentRow.Row("id").ToString, currentRow.Row("data").ToString)
+        End If
     End Sub
 End Class

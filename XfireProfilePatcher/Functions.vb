@@ -1,4 +1,5 @@
 ﻿Imports System.Xml
+Imports System.Text.RegularExpressions
 
 Public Class Functions
 
@@ -51,6 +52,15 @@ Public Class Functions
         End If
 
         Return table
+
+    End Function
+
+    Public Shared Function GetGameID(Data As String) As String
+
+        Dim regex As Regex = New Regex("(?<=\[)[\d_]{1,6}(?=\])")
+        Dim match As Match = regex.Match(Data)
+
+        Return match.Value
 
     End Function
 
