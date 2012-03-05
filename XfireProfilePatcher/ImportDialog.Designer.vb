@@ -81,8 +81,8 @@ Partial Class ImportDialog
         '
         'ImportFileDialog
         '
-        Me.ImportFileDialog.DefaultExt = "xppd"
-        Me.ImportFileDialog.Filter = "Xfire Profiles Patcher Data (*.xppd)|*.xppd|All files (*.*)|*.*"
+        Me.ImportFileDialog.DefaultExt = "xgp"
+        Me.ImportFileDialog.Filter = "Xfire Game Profiles (*.xgp)|*.xgp|All files (*.*)|*.*"
         Me.ImportFileDialog.Title = "Import game profiles"
         '
         'Label2
