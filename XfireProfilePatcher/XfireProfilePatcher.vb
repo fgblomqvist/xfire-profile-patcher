@@ -329,16 +329,17 @@ Public Class XfireProfilePatcher
 
         If IsOSVersionOld() Then
 
+            Dim regKey As RegistryKey
             If Environment.Is64BitOperatingSystem Then
-                loc = My.Computer.Registry.LocalMachine.GetValue("SOFTWARE\WoW6432Node\Xfire", "", Nothing).ToString + "\xfire_games.ini"
+                regKey = My.Computer.Registry.LocalMachine.OpenSubKey("SOFTWARE\WoW6432Node\Xfire")
             Else
-                loc = My.Computer.Registry.LocalMachine.GetValue("SOFTWARE\Xfire", "", Nothing).ToString + "\xfire_games.ini"
+                regKey = My.Computer.Registry.LocalMachine.OpenSubKey("SOFTWARE\Xfire")
             End If
 
+            loc = regKey.GetValue("", "", RegistryValueOptions.None).ToString + "\xfire_games.ini"
+
         Else
-
             loc = System.Environment.GetFolderPath(System.Environment.SpecialFolder.CommonApplicationData) + "\Xfire\xfire_games.ini"
-
         End If
 
         Return loc
