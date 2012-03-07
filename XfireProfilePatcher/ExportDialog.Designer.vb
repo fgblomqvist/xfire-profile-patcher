@@ -79,9 +79,9 @@ Partial Class ExportDialog
         '
         'SaveFile
         '
-        Me.SaveFile.DefaultExt = "xpg"
+        Me.SaveFile.DefaultExt = "xml"
         Me.SaveFile.DereferenceLinks = False
-        Me.SaveFile.Filter = "Xfire Game Profiles (*.xgp)|*.xgp"
+        Me.SaveFile.Filter = "Xfire Game Profiles (*.xml)|*.xml"
         Me.SaveFile.Title = "Export Game Profiles"
         '
         'ExportDialog

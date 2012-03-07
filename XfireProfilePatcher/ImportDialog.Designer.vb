@@ -81,8 +81,8 @@ Partial Class ImportDialog
         '
         'ImportFileDialog
         '
-        Me.ImportFileDialog.DefaultExt = "xgp"
-        Me.ImportFileDialog.Filter = "Xfire Game Profiles (*.xgp)|*.xgp|All files (*.*)|*.*"
+        Me.ImportFileDialog.DefaultExt = "xml"
+        Me.ImportFileDialog.Filter = "Xfire Game Profiles (*.xml)|*.xml|All files (*.*)|*.*"
         Me.ImportFileDialog.Title = "Import game profiles"
         '
         'Label2
