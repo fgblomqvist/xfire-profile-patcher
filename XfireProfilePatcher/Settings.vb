@@ -23,7 +23,7 @@ Public Class Settings
             AutoPatch = False
         End If
 
-        'Gameprofile Update Setting
+        'Game profile Update Setting
 
         If radbtnOnline.Checked Then
             My.Settings.UpdateGameProfiles = 1
@@ -113,16 +113,14 @@ Public Class Settings
 
         Get
 
-            Dim key As Microsoft.Win32.RegistryKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Run", True)
-
+            Dim key As RegistryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Run", True)
             Dim x As String = Nothing
 
             Try
 
-                x = key.GetValue("XfireGamePatcher").ToString
+                x = key.GetValue("XfireProfilePatcher", Nothing).ToString
 
             Catch e As NullReferenceException
-
                 'Key doesn't exist
 
             Catch e As Exception
@@ -145,20 +143,19 @@ Public Class Settings
 
         Set(ByVal value As Boolean)
 
+            Dim key As RegistryKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Run", True)
+
             If value = True Then
 
                 Dim output As String = """" + Application.ExecutablePath + """ -nogui"
-
-                My.Computer.Registry.SetValue("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "XfireGamePatcher", output)
+                key.SetValue("XfireProfilePatcher", output)
 
             Else
 
-                Dim key As Microsoft.Win32.RegistryKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Run", True)
-
-                If key.GetValue("XfireGamePatcher", Nothing) IsNot Nothing Then
+                If key.GetValue("XfireProfilePatcher", Nothing) IsNot Nothing Then
 
                     Try
-                        key.DeleteValue("XfireGamePatcher")
+                        key.DeleteValue("XfireProfilePatcher")
                     Catch e As Exception
                         MsgBox("Failed to edit autopatch! No rights for registry!", MsgBoxStyle.Critical)
                     End Try

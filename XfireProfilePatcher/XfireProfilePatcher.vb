@@ -117,9 +117,7 @@ Public Class XfireProfilePatcher
             'Check if the regkey with the path to the program exists, if it doesn't it is portable
             Dim key As RegistryKey
             If Environment.Is64BitOperatingSystem Then
-
                 key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Xfire Profile Patcher")
-
             Else
                 key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Xfire Profile Patcher")
             End If
@@ -128,13 +126,9 @@ Public Class XfireProfilePatcher
 
             Try
                 If key IsNot Nothing Then
-
                     value = Convert.ToString(key.GetValue("InstallLocation", Nothing))
-
                 Else
-
                     Return True
-
                 End If
 
             Catch ex As Exception
@@ -243,16 +237,28 @@ Public Class XfireProfilePatcher
 
         If IsOSVersionOld() Then
 
-            If Environment.Is64BitOperatingSystem Then
+            Try
+                If Environment.Is64BitOperatingSystem Then
+                    Return My.Computer.Registry.LocalMachine.GetValue("SOFTWARE\WoW6432Node\Xfire", "", Nothing).ToString + "\Xfire.exe"
+                Else
+                    Return My.Computer.Registry.LocalMachine.GetValue("SOFTWARE\Xfire", "", Nothing).ToString + "\Xfire.exe"
+                End If
+            Catch ex As System.Security.SecurityException
+                'The user doesn't have permission to read from registry, check default path
+                If Environment.Is64BitOperatingSystem Then
+                    If File.Exists("C:\Program Files (x86)\Xfire\Xfire.exe") Then
+                        Return "C:\Program Files (x86)\Xfire\xfire_games.ini"
+                    End If
+                Else
+                    If File.Exists("C:\Program Files\Xfire\xfire_games.ini") Then
+                        Return "C:\Program Files\Xfire\xfire_games.ini"
+                    End If
+                End If
 
-                Return My.Computer.Registry.LocalMachine.GetValue("SOFTWARE\WoW6432Node\Xfire", "", Nothing).ToString + "\Xfire.exe"
+                'Give it a last shot, prompt the user for the file
+                Return PromptUserXfireINI()
 
-            Else
-
-                Return My.Computer.Registry.LocalMachine.GetValue("SOFTWARE\Xfire", "", Nothing).ToString + "\Xfire.exe"
-
-            End If
-
+            End Try
         Else
 
             Dim ini As New INIAccess
@@ -329,15 +335,33 @@ Public Class XfireProfilePatcher
 
         If IsOSVersionOld() Then
 
-            Dim regKey As RegistryKey
-            If Environment.Is64BitOperatingSystem Then
-                regKey = My.Computer.Registry.LocalMachine.OpenSubKey("SOFTWARE\WoW6432Node\Xfire")
-            Else
-                regKey = My.Computer.Registry.LocalMachine.OpenSubKey("SOFTWARE\Xfire")
-            End If
+            Try
+                Dim regKey As RegistryKey
+                If Environment.Is64BitOperatingSystem Then
+                    regKey = My.Computer.Registry.LocalMachine.OpenSubKey("SOFTWARE\WoW6432Node\Xfire")
+                Else
+                    regKey = My.Computer.Registry.LocalMachine.OpenSubKey("SOFTWARE\Xfire")
+                End If
 
-            loc = regKey.GetValue("", "", RegistryValueOptions.None).ToString + "\xfire_games.ini"
+                loc = regKey.GetValue("", "", RegistryValueOptions.None).ToString + "\xfire_games.ini"
 
+            Catch ex As System.Security.SecurityException
+                'The user doesn't have permission to read from registry, check default path
+                If Environment.Is64BitOperatingSystem Then
+                    If File.Exists("C:\Program Files (x86)\Xfire\xfire_games.ini") Then
+                        loc = "C:\Program Files (x86)\Xfire\xfire_games.ini"
+                    End If
+                Else
+                    If File.Exists("C:\Program Files\Xfire\xfire_games.ini") Then
+                        loc = "C:\Program Files\Xfire\xfire_games.ini"
+                    End If
+                End If
+
+                If loc Is Nothing Then
+                    'Give it a last shot, prompt the user for the file
+                    loc = PromptUserXfireINI()
+                End If
+            End Try
         Else
             loc = System.Environment.GetFolderPath(System.Environment.SpecialFolder.CommonApplicationData) + "\Xfire\xfire_games.ini"
         End If
@@ -447,8 +471,6 @@ Public Class XfireProfilePatcher
 
     Private Sub SettingsButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SettingsButton.Click
 
-        Dim ini As New INIAccess
-
         Settings.ShowDialog()
 
     End Sub
@@ -551,6 +573,28 @@ Public Class XfireProfilePatcher
         End If
 
     End Sub
+
+    Private Function PromptUserXfireINI() As String
+
+        Dim dlg As OpenFileDialog = New OpenFileDialog()
+        dlg.CheckFileExists = True
+        dlg.CheckPathExists = True
+        dlg.DefaultExt = ".ini"
+        dlg.DereferenceLinks = True
+        dlg.FileName = "xfire_games.ini"
+        dlg.Filter = "xfire_games.ini|xfire_games.ini"
+        dlg.Multiselect = False
+        dlg.Title = "Please locate your xfire_games.ini"
+
+        MessageBox.Show("Unable to locate xfire_games.ini, please locate it for me!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+
+        If dlg.ShowDialog() = True Then
+            Return dlg.FileName
+        End If
+
+        Return Nothing
+
+    End Function
 End Class
 
 
