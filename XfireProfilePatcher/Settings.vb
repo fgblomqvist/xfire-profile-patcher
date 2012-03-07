@@ -110,14 +110,12 @@ Public Class Settings
 
     Private Property AutoPatch As Boolean
 
-
         Get
 
-            Dim key As RegistryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Run", True)
             Dim x As String = Nothing
 
             Try
-
+                Dim key As RegistryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\Microsoft\Windows\CurrentVersion\Run", True)
                 x = key.GetValue("XfireProfilePatcher", Nothing).ToString
 
             Catch e As NullReferenceException

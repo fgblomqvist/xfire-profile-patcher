@@ -114,26 +114,27 @@ Public Class XfireProfilePatcher
     Public ReadOnly Property Portable As Boolean
 
         Get
-            'Check if the regkey with the path to the program exists, if it doesn't it is portable
-            Dim key As RegistryKey
-            If Environment.Is64BitOperatingSystem Then
-                key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Xfire Profile Patcher")
-            Else
-                key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Xfire Profile Patcher")
-            End If
-
             Dim value As String = Nothing
-
             Try
+                'Check if the regkey with the path to the program exists, if it doesn't it is portable
+                Dim key As RegistryKey
+                If Environment.Is64BitOperatingSystem Then
+                    key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Xfire Profile Patcher")
+                Else
+                    key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Xfire Profile Patcher")
+                End If
+
                 If key IsNot Nothing Then
                     value = Convert.ToString(key.GetValue("InstallLocation", Nothing))
                 Else
                     Return True
                 End If
 
+            Catch ex As System.Security.SecurityException
+                'The user doesn't have permission to read from registry
+                MessageBox.Show("XPP was unable to get read access to the registry, without that permission it can't function normally and will therefore exit.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Application.Exit()
             Catch ex As Exception
-
-
             End Try
 
             If value IsNot Nothing Then
@@ -147,6 +148,7 @@ Public Class XfireProfilePatcher
     Public Sub XfireGamePatcher_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
         SetXfireINIPath()
+        ThreadPool.QueueUserWorkItem(AddressOf UpdateStatus)
 
         Dim args() As String
         Dim i As Integer
@@ -185,8 +187,6 @@ Public Class XfireProfilePatcher
 
         Me.Opacity = 100
         Me.ShowInTaskbar = True
-
-        ThreadPool.QueueUserWorkItem(AddressOf UpdateStatus)
 
         If My.Settings.CheckForUpdates = True Then
 
