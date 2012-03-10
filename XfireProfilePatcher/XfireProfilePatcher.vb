@@ -176,9 +176,9 @@ Public Class XfireProfilePatcher
 
                     If My.Settings.restartXfire = True Then
                         RestartXfire()
+                    Else
+                        timerOne.Start()
                     End If
-
-                    timerOne.Start()
 
                     Exit Sub
             End Select
