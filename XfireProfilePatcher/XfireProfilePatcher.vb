@@ -25,6 +25,7 @@ Imports System.ComponentModel
 Imports System.Threading
 Imports Microsoft.Win32
 Imports System.Net
+Imports Logger
 
 
 Public Class XfireProfilePatcher
@@ -32,6 +33,7 @@ Public Class XfireProfilePatcher
     Private pPatchLabelStatus As PatchStatus
     Private Delegate Sub SetPatchLabelInvoker(color As Color, text As String)
     Private Delegate Sub SetRestoreBtnInvoker(bool As Boolean)
+    Private pLogger As Log
 
     Public Enum PatchStatus
 
@@ -87,6 +89,15 @@ Public Class XfireProfilePatcher
 
             SetPatchLabel(color, text)
 
+        End Set
+    End Property
+
+    Public Property Logger As Log
+        Get
+            Return pLogger
+        End Get
+        Set(value As Log)
+            pLogger = value
         End Set
     End Property
 
@@ -147,6 +158,9 @@ Public Class XfireProfilePatcher
 
     Public Sub XfireGamePatcher_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
+        If My.Settings.logging = True Then
+            Logger = New Log("xpp.log")
+        End If
         SetXfireINIPath()
         ThreadPool.QueueUserWorkItem(AddressOf UpdateStatus)
 
@@ -170,7 +184,7 @@ Public Class XfireProfilePatcher
                         PatchFile(False)
                         .Visible = False
                         .Visible = True
-                        .BalloonTipText = "Finished Patching, Have a nice day."
+                        .BalloonTipText = "Finished patching, have a nice day."
                         .ShowBalloonTip(3000)
                     End With
 
@@ -198,8 +212,14 @@ Public Class XfireProfilePatcher
 
     Private Sub RestartXfire()
 
+        Logger.Write("Quiting Xfire")
         Dim path As String = XfireEXEPath()
-        Process.Start(path, "/quit")
+
+        Try
+            Process.Start(path, "/quit")
+        Catch ex As Exception
+            Logger.Write("Failed to quit Xfire: " + ex.ToString(), Log.Type.Error)
+        End Try
 
         Dim sw As New Stopwatch
         sw.Start()
@@ -208,7 +228,12 @@ Public Class XfireProfilePatcher
             Application.DoEvents()
         Loop
 
-        Process.Start(path, "/minimized")
+        Logger.Write("Starting Xfire")
+        Try
+            Process.Start(path, "/minimized")
+        Catch ex As Exception
+            Logger.Write("Failed to start Xfire: " + ex.ToString(), Log.Type.Error)
+        End Try
 
     End Sub
 
@@ -235,36 +260,45 @@ Public Class XfireProfilePatcher
 
     Public Function XfireEXEPath() As String
 
+        Logger.Write("Trying to get Xfire path")
+
+        Dim xPath As String = Nothing
+
         If IsOSVersionOld() Then
 
             Try
                 If Environment.Is64BitOperatingSystem Then
-                    Return My.Computer.Registry.LocalMachine.GetValue("SOFTWARE\WoW6432Node\Xfire", "", Nothing).ToString + "\Xfire.exe"
+                    xPath = My.Computer.Registry.LocalMachine.GetValue("SOFTWARE\WoW6432Node\Xfire", "", Nothing).ToString + "\Xfire.exe"
                 Else
-                    Return My.Computer.Registry.LocalMachine.GetValue("SOFTWARE\Xfire", "", Nothing).ToString + "\Xfire.exe"
+                    xPath = My.Computer.Registry.LocalMachine.GetValue("SOFTWARE\Xfire", "", Nothing).ToString + "\Xfire.exe"
                 End If
             Catch ex As System.Security.SecurityException
                 'The user doesn't have permission to read from registry, check default path
                 If Environment.Is64BitOperatingSystem Then
                     If File.Exists("C:\Program Files (x86)\Xfire\Xfire.exe") Then
-                        Return "C:\Program Files (x86)\Xfire\xfire_games.ini"
+                        xPath = "C:\Program Files (x86)\Xfire\xfire_games.ini"
+
                     End If
                 Else
                     If File.Exists("C:\Program Files\Xfire\xfire_games.ini") Then
-                        Return "C:\Program Files\Xfire\xfire_games.ini"
+                        xPath = "C:\Program Files\Xfire\xfire_games.ini"
                     End If
                 End If
 
-                'Give it a last shot, prompt the user for the file
-                Return PromptUserXfireINI()
-
+                If xPath Is Nothing Then
+                    'Give it a last shot, prompt the user for the file
+                    xPath = PromptUserXfireINI()
+                End If
             End Try
         Else
 
             Dim ini As New INIAccess
-            Return ini.INIRead(Path.GetDirectoryName(My.Settings.xfireINIPath) + "\Xfire.ini", "Xfire", "ProgramPath", Nothing).ToString & "\Xfire.exe"
+            xPath = (ini.INIRead(Path.GetDirectoryName(My.Settings.xfireINIPath) + "\Xfire.ini", "Xfire", "ProgramPath", Nothing).ToString & "\Xfire.exe")
 
         End If
+
+        Logger.Write("Found Xfire here: " + xPath)
+        Return xPath
 
     End Function
 

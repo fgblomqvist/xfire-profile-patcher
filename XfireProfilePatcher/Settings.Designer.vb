@@ -36,9 +36,12 @@ Partial Class Settings
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
         Me.cboxCheckForUpdates = New System.Windows.Forms.CheckBox()
+        Me.grpboxLogging = New System.Windows.Forms.GroupBox()
+        Me.cboxLogging = New System.Windows.Forms.CheckBox()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
+        Me.grpboxLogging.SuspendLayout()
         Me.SuspendLayout()
         '
         'cboxAutoPatch
@@ -54,9 +57,8 @@ Partial Class Settings
         '
         'OKButton
         '
-        Me.OKButton.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.OKButton.Location = New System.Drawing.Point(77, 289)
+        Me.OKButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+        Me.OKButton.Location = New System.Drawing.Point(342, 188)
         Me.OKButton.Name = "OKButton"
         Me.OKButton.Size = New System.Drawing.Size(75, 23)
         Me.OKButton.TabIndex = 2
@@ -65,9 +67,8 @@ Partial Class Settings
         '
         'btnCancel
         '
-        Me.btnCancel.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnCancel.Location = New System.Drawing.Point(158, 289)
+        Me.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+        Me.btnCancel.Location = New System.Drawing.Point(423, 188)
         Me.btnCancel.Name = "btnCancel"
         Me.btnCancel.Size = New System.Drawing.Size(75, 23)
         Me.btnCancel.TabIndex = 3
@@ -145,14 +146,14 @@ Partial Class Settings
         Me.GroupBox2.Size = New System.Drawing.Size(282, 87)
         Me.GroupBox2.TabIndex = 6
         Me.GroupBox2.TabStop = False
-        Me.GroupBox2.Text = "AutoPatcher"
+        Me.GroupBox2.Text = "Autopatcher"
         '
         'GroupBox3
         '
         Me.GroupBox3.Controls.Add(Me.cboxCheckForUpdates)
-        Me.GroupBox3.Location = New System.Drawing.Point(12, 213)
+        Me.GroupBox3.Location = New System.Drawing.Point(300, 12)
         Me.GroupBox3.Name = "GroupBox3"
-        Me.GroupBox3.Size = New System.Drawing.Size(282, 61)
+        Me.GroupBox3.Size = New System.Drawing.Size(220, 61)
         Me.GroupBox3.TabIndex = 7
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "Updates"
@@ -167,11 +168,32 @@ Partial Class Settings
         Me.cboxCheckForUpdates.Text = "Check for updates on program start"
         Me.cboxCheckForUpdates.UseVisualStyleBackColor = True
         '
+        'grpboxLogging
+        '
+        Me.grpboxLogging.Controls.Add(Me.cboxLogging)
+        Me.grpboxLogging.Location = New System.Drawing.Point(300, 79)
+        Me.grpboxLogging.Name = "grpboxLogging"
+        Me.grpboxLogging.Size = New System.Drawing.Size(220, 61)
+        Me.grpboxLogging.TabIndex = 8
+        Me.grpboxLogging.TabStop = False
+        Me.grpboxLogging.Text = "Logging"
+        '
+        'cboxLogging
+        '
+        Me.cboxLogging.AutoSize = True
+        Me.cboxLogging.Location = New System.Drawing.Point(10, 28)
+        Me.cboxLogging.Name = "cboxLogging"
+        Me.cboxLogging.Size = New System.Drawing.Size(98, 17)
+        Me.cboxLogging.TabIndex = 0
+        Me.cboxLogging.Text = "Enable logging"
+        Me.cboxLogging.UseVisualStyleBackColor = True
+        '
         'Settings
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(306, 324)
+        Me.ClientSize = New System.Drawing.Size(533, 223)
+        Me.Controls.Add(Me.grpboxLogging)
         Me.Controls.Add(Me.GroupBox3)
         Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.GroupBox1)
@@ -192,6 +214,8 @@ Partial Class Settings
         Me.GroupBox2.PerformLayout()
         Me.GroupBox3.ResumeLayout(False)
         Me.GroupBox3.PerformLayout()
+        Me.grpboxLogging.ResumeLayout(False)
+        Me.grpboxLogging.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -207,4 +231,6 @@ Partial Class Settings
     Friend WithEvents radbtnManually As System.Windows.Forms.RadioButton
     Friend WithEvents GroupBox3 As System.Windows.Forms.GroupBox
     Friend WithEvents cboxCheckForUpdates As System.Windows.Forms.CheckBox
+    Friend WithEvents grpboxLogging As System.Windows.Forms.GroupBox
+    Friend WithEvents cboxLogging As System.Windows.Forms.CheckBox
 End Class

@@ -8,7 +8,6 @@ Public Class Settings
     Private Sub OKButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OKButton.Click
 
         'Autopatch Setting
-
         If cboxAutoPatch.Checked Then
 
             AutoPatch = True
@@ -24,7 +23,6 @@ Public Class Settings
         End If
 
         'Game profile Update Setting
-
         If radbtnOnline.Checked Then
             My.Settings.UpdateGameProfiles = 1
         ElseIf radbtnManually.Checked Then
@@ -32,11 +30,17 @@ Public Class Settings
         End If
 
         'Check for updates setting
-
         If cboxCheckForUpdates.Checked Then
             My.Settings.CheckForUpdates = True
         Else
             My.Settings.CheckForUpdates = False
+        End If
+
+        'Logging settings
+        If cboxLogging.Checked Then
+            My.Settings.logging = True
+        Else
+            My.Settings.logging = False
         End If
 
         My.Settings.Save()
@@ -83,6 +87,14 @@ Public Class Settings
 
             cboxCheckForUpdates.Checked = False
 
+        End If
+
+        If My.Settings.logging = True Then
+            cboxLogging.Checked = True
+            'Start the logging
+            XfireProfilePatcher.Logger = New Logger.Log("xpp.log")
+        Else
+            cboxLogging.Checked = False
         End If
 
     End Sub
