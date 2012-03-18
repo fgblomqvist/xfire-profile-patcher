@@ -121,9 +121,9 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Logger">
+    <Reference Include="Logger, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Logger.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -308,19 +308,12 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <PublishFile Include="Logger">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>Assembly</FileType>
-    </PublishFile>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>copy /Y "C:\Users\Fredrik\Documents\Visual Studio 2010\Projects\Logger\Logger\bin\Debug\Logger.dll" "C:\Users\Fredrik\Documents\Visual Studio 2010\Projects\XfireProfilePatcher\XfireProfilePatcher\bin\Debug\Logger.dll"
+copy /Y "C:\Users\Fredrik\Documents\Visual Studio 2010\Projects\Logger\Logger\bin\Debug\Logger.dll" "C:\Users\Fredrik\Documents\Visual Studio 2010\Projects\XfireProfilePatcher\XfireProfilePatcher\Logger.dll"</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

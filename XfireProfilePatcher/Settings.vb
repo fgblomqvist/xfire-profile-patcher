@@ -91,8 +91,6 @@ Public Class Settings
 
         If My.Settings.logging = True Then
             cboxLogging.Checked = True
-            'Start the logging
-            XfireProfilePatcher.Logger = New Logger.Log("xpp.log")
         Else
             cboxLogging.Checked = False
         End If

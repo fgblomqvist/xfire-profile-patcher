@@ -33,7 +33,7 @@ Public Class XfireProfilePatcher
     Private pPatchLabelStatus As PatchStatus
     Private Delegate Sub SetPatchLabelInvoker(color As Color, text As String)
     Private Delegate Sub SetRestoreBtnInvoker(bool As Boolean)
-    Private pLogger As Log
+    Private pXPPLogger As Log = New Log("xpp.log")
 
     Public Enum PatchStatus
 
@@ -92,12 +92,12 @@ Public Class XfireProfilePatcher
         End Set
     End Property
 
-    Public Property Logger As Log
+    Public Property XPPLogger As Log
         Get
-            Return pLogger
+            Return pXPPLogger
         End Get
         Set(value As Log)
-            pLogger = value
+            pXPPLogger = value
         End Set
     End Property
 
@@ -158,9 +158,8 @@ Public Class XfireProfilePatcher
 
     Public Sub XfireGamePatcher_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
-        If My.Settings.logging = True Then
-            Logger = New Log("xpp.log")
-        End If
+        WriteLog("Starting Xfire Profile Patcher v" + Application.ProductVersion.ToString())
+
         SetXfireINIPath()
         ThreadPool.QueueUserWorkItem(AddressOf UpdateStatus)
 
@@ -212,13 +211,13 @@ Public Class XfireProfilePatcher
 
     Private Sub RestartXfire()
 
-        Logger.Write("Quiting Xfire")
+        WriteLog("Quiting Xfire")
         Dim path As String = XfireEXEPath()
 
         Try
             Process.Start(path, "/quit")
         Catch ex As Exception
-            Logger.Write("Failed to quit Xfire: " + ex.ToString(), Log.Type.Error)
+            WriteLog("Failed to quit Xfire: " + ex.ToString(), Log.Type.Error)
         End Try
 
         Dim sw As New Stopwatch
@@ -228,11 +227,11 @@ Public Class XfireProfilePatcher
             Application.DoEvents()
         Loop
 
-        Logger.Write("Starting Xfire")
+        WriteLog("Starting Xfire")
         Try
             Process.Start(path, "/minimized")
         Catch ex As Exception
-            Logger.Write("Failed to start Xfire: " + ex.ToString(), Log.Type.Error)
+            WriteLog("Failed to start Xfire: " + ex.ToString(), Log.Type.Error)
         End Try
 
     End Sub
@@ -260,7 +259,7 @@ Public Class XfireProfilePatcher
 
     Public Function XfireEXEPath() As String
 
-        Logger.Write("Trying to get Xfire path")
+        WriteLog("Trying to get Xfire path")
 
         Dim xPath As String = Nothing
 
@@ -297,7 +296,7 @@ Public Class XfireProfilePatcher
 
         End If
 
-        Logger.Write("Found Xfire here: " + xPath)
+        WriteLog("Found Xfire here: " + xPath)
         Return xPath
 
     End Function
@@ -629,6 +628,15 @@ Public Class XfireProfilePatcher
         Return Nothing
 
     End Function
+
+    Public Sub WriteLog(message As String)
+        WriteLog(message, Log.Type.Info)
+    End Sub
+    Public Sub WriteLog(message As String, type As Log.Type)
+        If My.Settings.logging Then
+            XPPLogger.Write(message, type)
+        End If
+    End Sub
 End Class
 
 
