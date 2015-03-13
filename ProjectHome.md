@@ -1,0 +1,1 @@
+Playing your favorite game with Xfire enabled is something all of the users of the service wants, but Xfire has unfortunately put some limitations that require some workarounds. With XPP you can get Xfire running with your favorite game in no time! Simple and easy!
